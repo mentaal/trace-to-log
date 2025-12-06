@@ -38,6 +38,7 @@ def test_enabled_adder(monkeypatch, caplog):
 
     # determining when tracing is enabled occurs at the time `trace` is created
     res = make_and_use_adder(make_trace())
+    print("\n".join(r.msg for r in caplog.records))
     assert res == 3
     assert len(caplog.records) == 3
     assert "Finished adder, returned:3" == caplog.records[-1].msg
@@ -128,3 +129,23 @@ def test_variable_args(caplog):
     assert "Finished var_args, returned:4" == caplog.records[-1].msg
     assert "k :: " in caplog.records[0].msg
     assert "kwargs :: " in caplog.records[0].msg
+
+
+def test_arg_conversion(caplog):
+    caplog.set_level(logging.DEBUG)
+
+    trace = make_trace(
+        trace_enable=lambda: True,
+    )
+
+    to_hex = lambda x: format(x, "#010x")  # noqa: E731
+
+    @trace("value", address=to_hex)
+    def write_32(address: int, value: int):
+        pass
+
+    _ = write_32(0x2000_0000, 12)
+
+    assert len(caplog.records) == 3
+    assert "address :: 0x20000000" in caplog.records[0].msg
+    assert "value :: 12" in caplog.records[0].msg
