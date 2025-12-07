@@ -40,6 +40,13 @@ def make_decorator(
     trace_return: Optional[Callable],
     trace_config: TraceConfig,
 ) -> Callable:
+    if len(args_to_log) == 1 and args_to_log[0] == "*":
+        log_all_args = True
+        args_to_log = []
+    elif "*" in args_to_log:
+        raise ValueError("'*' argument can only be applied on its own")
+    else:
+        log_all_args = False
     _args_to_log_set = frozenset(args_to_log) | args_coersion_to_log.keys()
     total_args_len = len(args_to_log) + len(args_coersion_to_log)
     if len(_args_to_log_set) != total_args_len:
@@ -52,7 +59,7 @@ def make_decorator(
 
     def decorator(func: Callable) -> Callable:
         s = signature(func)
-        if not _args_to_log_set:
+        if log_all_args:
             # log all args
             args_to_log_set = s.parameters.keys()
             coersion_args = {a: default_str_conversion for a in args_to_log_set}
@@ -128,7 +135,7 @@ def _make_trace(
         if len(args) == 1 and callable(args[0]):
             return args[0]
         else:
-            return lambda func: func
+            return nop
 
 
 def make_trace(**kwargs):

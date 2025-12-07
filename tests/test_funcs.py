@@ -5,7 +5,7 @@ from trace_to_log import make_trace
 
 
 def make_and_use_adder(trace: Callable):
-    @trace
+    @trace("*")
     def adder(x: int, y: int) -> int:
         return x + y
 
@@ -13,7 +13,7 @@ def make_and_use_adder(trace: Callable):
 
 
 def make_and_use_adder_in_class(trace: Callable, with_self: bool):
-    tracer = trace() if with_self else trace("x", "y")
+    tracer = trace("*") if with_self else trace("x", "y")
 
     class T:
         @tracer

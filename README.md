@@ -10,10 +10,13 @@ Example:
 ```python
 from trace_to_log import trace
 
-@trace
+@trace('*')
 def adder(x:int, y:int) -> int:
     return x + y
 ```
+
+Note, the '*' argument means all arguments should be logged. Otherwise, no
+arguments are logged.
 
 Now, calling `adder` will result in the following log entries at DEBUG level:
 
@@ -28,7 +31,7 @@ Finished adder, returned:3
 ## being picky
 
 If you don't want to log every argument, maybe because the string representation
-of one of the objects is verbose, you can explicitly select which to arguments
+of one of the objects is verbose, you can explicitly select which arguments
 to log:
 
 ```python
@@ -82,7 +85,7 @@ trace = make_trace(
     trace_enable=lambda: True,
 )
 
-@trace
+@trace('*')
 def adder(x:int, y:int) -> int:
     return x + y
 ```

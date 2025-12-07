@@ -1,6 +1,6 @@
 [project]
 name = "trace-to-log"
-version = "0.1.0"
+version = "0.2.0"
 description = "Add minimal tracing to a function using a decorator"
 readme = "README.md"
 license = "MIT"
